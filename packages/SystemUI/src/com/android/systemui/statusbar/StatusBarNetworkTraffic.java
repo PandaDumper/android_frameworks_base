@@ -44,7 +44,7 @@ public class StatusBarNetworkTraffic extends NetworkTraffic implements DarkRecei
     private int mVisibleState = -1;
     private boolean mColorIsStatic;
 
-    private KeyguardUpdateMonitor mKeyguardUpdateMonitor;
+    private final KeyguardUpdateMonitor mKeyguardUpdateMonitor;
     private boolean mKeyguardShowing;
 
     private String mSlot;
@@ -59,6 +59,8 @@ public class StatusBarNetworkTraffic extends NetworkTraffic implements DarkRecei
 
     public StatusBarNetworkTraffic(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mKeyguardUpdateMonitor = Dependency.get(KeyguardUpdateMonitor.class);
+        mKeyguardUpdateMonitor.registerCallback(mUpdateCallback);
     }
 
     public static StatusBarNetworkTraffic fromContext(Context context, String slot) {
@@ -111,15 +113,6 @@ public class StatusBarNetworkTraffic extends NetworkTraffic implements DarkRecei
     public void setVisibleState(int state, boolean animate) {
         mVisibleState = state;
         updateVisibility();
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (mAttached && mKeyguardUpdateMonitor == null) {
-            mKeyguardUpdateMonitor = Dependency.get(KeyguardUpdateMonitor.class);
-            mKeyguardUpdateMonitor.registerCallback(mUpdateCallback);
-        }
     }
 
     public void applyNetworkTrafficState(NetworkTrafficState state) {
