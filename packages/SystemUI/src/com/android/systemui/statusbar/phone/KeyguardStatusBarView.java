@@ -291,12 +291,18 @@ public class KeyguardStatusBarView extends RelativeLayout {
         LinearLayout.LayoutParams lp =
                 (LinearLayout.LayoutParams) mSystemIconsContainer.getLayoutParams();
 
-        // Don't use status_bar_padding_end here after all, since this is the nested system icon container,
-        // and we're going to be applying extra padding to the outer status_icon_area view instead.
+        // Use status_bar_padding_end to replace original
+        // system_icons_super_container_avatarless_margin_end to prevent different end alignment
+        // between PhoneStatusBarView and KeyguardStatusBarView
+        int baseMarginEnd = mStatusBarPaddingEnd;
         int marginEnd =
-                mKeyguardUserSwitcherEnabled ? mSystemIconsSwitcherHiddenExpandedMargin : 0;
+                mKeyguardUserSwitcherEnabled ? mSystemIconsSwitcherHiddenExpandedMargin
+                        : baseMarginEnd;
 
-        // Align PhoneStatusBar right margin/padding
+        // Align PhoneStatusBar right margin/padding, only use
+        // 1. status bar layout: mPadding(consider round_corner + privacy dot)
+        // 2. icon container: R.dimen.status_bar_padding_end
+
         if (marginEnd != lp.getMarginEnd()) {
             lp.setMarginEnd(marginEnd);
             mSystemIconsContainer.setLayoutParams(lp);
